@@ -1,0 +1,12 @@
+body::before {
+    content: "";
+    background-image: url("../images/trnava-university-BEEyeib-am8-unsplash.jpg");
+    background-size: cover;
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    bottom: 0px;
+    left: 0px;
+    opacity: 0.25;
+}
+
