@@ -1,0 +1,13 @@
+img {
+    margin: auto;
+    display: block;
+    max-width:200px;
+    max-height:200px;
+    width: auto;
+    height: auto;
+}
+
+.results-container {
+    overflow-y: scroll;
+    max-height: 90vh;
+}
