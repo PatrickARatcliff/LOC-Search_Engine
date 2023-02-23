@@ -22,6 +22,9 @@ function searchFromSubmitHandler(event) {
 
     const queryString = `./results.html?q=${searchTerm}&format=${searchFormat}`;
 
+    localStorage.setItem('searchTerm', searchTerm);
+    localStorage.setItem('serarchFormat', searchFormat);
+
     location.assign(queryString);
 }
 
