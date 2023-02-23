@@ -82,7 +82,7 @@ function apiPromise(url) {
             console.log(data.search.query);
             console.log(data.results)
             resultText.textContent = '';
-            resultText.textContent = `${searchTerm}, ${searchFormat}`;
+            resultText.textContent = `${searchTerm}, ${searchFormat} (${data.results.length})`;
             if (!data.results.length) {
                 console.log('No results found!');
                 resultsContainer.innerHTML = `<h5>No results for ${searchTerm}, ${searchFormat}</h5>`;
@@ -96,7 +96,7 @@ function apiPromise(url) {
         .catch((error) => window.alert(error))
 };
 
-function searchFromSubmitHandler(event) {
+function searchFormSubmitHandler(event) {
     event.preventDefault();
 
     const searchTerm = document.getElementById("search-term").value;
@@ -119,7 +119,7 @@ function searchFromSubmitHandler(event) {
 };
 
 //event listeners
-searchForm.addEventListener("submit", searchFromSubmitHandler);
+searchForm.addEventListener("submit", searchFormSubmitHandler);
 
 //logic if needed
 apiPromise(apiRequestUrl);

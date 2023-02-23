@@ -6,7 +6,7 @@ const searchForm = document.getElementById("search-form");
 
 
 //functions
-function searchFromSubmitHandler(event) {
+function searchFormSubmitHandler(event) {
     event.preventDefault();
 
     const searchTerm = document.getElementById("search-term").value;
@@ -29,6 +29,6 @@ function searchFromSubmitHandler(event) {
 }
 
 //event listeners
-searchForm.addEventListener("submit", searchFromSubmitHandler)
+searchForm.addEventListener("submit", searchFormSubmitHandler)
 
 //logic if needed
