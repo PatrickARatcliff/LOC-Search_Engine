@@ -12,10 +12,13 @@ const searchTermQuery = searchFormatQuery[1].split('&', 1);
 const searchFormat = searchFormatQuery[2];
 const searchTerm = searchTermQuery[0];
 const apiRequestUrl = `${apiBase}${searchFormat}/?${jsonParameter}&q=${searchTerm}`;
+
+let termArray = [];
+let formatArray = [];
 //functions
 // console.log(searchFormat);
 // console.log(searchTerm);
-console.log(apiRequestUrl);
+// console.log(apiRequestUrl);
 
 function populateResults(resultData) {
 
@@ -23,11 +26,11 @@ function populateResults(resultData) {
     resultCard.classList.add('card', 'my-2');
 
     let cardImageTop = document.createElement('div')
-    if(resultData.image_url[0]) {
+    if (resultData.image_url[0]) {
         cardImageTop.innerHTML = `<img src="${resultData.image_url[0]}" class="card-img-top" alt="..." style=""></img>`
         resultCard.appendChild(cardImageTop);
     };
-    
+
     let cardBody = document.createElement('div');
     cardBody.classList.add('card-body');
     resultCard.appendChild(cardBody);
@@ -67,7 +70,47 @@ function populateResults(resultData) {
         resultCard.appendChild(cardBodyLinkEl);
     }
 
-  resultsContainer.append(resultCard)
+    resultsContainer.append(resultCard)
+};
+
+function populateSearchHistory() {
+    let prevSearchTerm = localStorage.getItem('searchTerm', searchTerm);
+    let prevSearchFormat = localStorage.getItem('searchFormat', searchFormat);
+
+    let prevSearchBtn = document.createElement('button');
+    prevSearchBtn.classList.add('btn', 'btn-secondary');
+
+    prevSearchBtn.textContent = `${prevSearchTerm}, ${prevSearchFormat}`;
+
+    searchContainer.append(prevSearchBtn);
+};
+
+// function loadHistData () {
+//     localStorageArrayTerm = localStorage.getItem('localStorageArrayTerm') || `[]`;
+//     localStorageArrayFormat = localStorage.getItem('localStorageArrayFormat') || '[]';
+
+// };
+
+function saveHistData() {
+
+    let term = JSON.parse(localStorage.getItem('searchTerm'));
+    let format = JSON.parse(localStorage.getItem('searchFormat'));
+
+    // console.log(term);
+    // console.log(format);
+
+    termArray = JSON.parse(localStorage.getItem('termArray', termArray) || `[]`);
+    console.log(termArray)
+    formatArray = JSON.parse(localStorage.getItem('formatArray', formatArray) || `[]`);
+
+    termArray.push(term);
+    formatArray.push(format);
+
+    // console.log(termArray);
+    // console.log(formatArray);
+
+    localStorage.setItem('termArray', JSON.stringify(termArray));
+    localStorage.setItem('formatArray', JSON.stringify(formatArray));
 };
 
 function apiPromise(url) {
@@ -90,7 +133,8 @@ function apiPromise(url) {
                 resultsContainer.innerHTML = '';
                 for (let i = 0; i < data.results.length; i++) {
                     populateResults(data.results[i])
-                }
+                };
+                populateSearch()
             }
         })
         .catch((error) => window.alert(error))
@@ -99,8 +143,8 @@ function apiPromise(url) {
 function searchFormSubmitHandler(event) {
     event.preventDefault();
 
-    const searchTerm = document.getElementById("search-term").value;
-    const searchFormat = document.getElementById("format-term").value;
+    const searchTerm = document.getElementById("search-term").value.trim().toUpperCase();
+    const searchFormat = document.getElementById("format-term").value.trim().toUpperCase();
 
     if (!searchTerm) {
         window.alert('Please enter a "Search Term"');
@@ -112,8 +156,10 @@ function searchFormSubmitHandler(event) {
 
     const queryString = `./results.html?q=${searchTerm}&format=${searchFormat}`;
 
-    localStorage.setItem('searchTerm', searchTerm);
-    localStorage.setItem('serarchFormat', searchFormat);
+    localStorage.setItem('searchTerm', JSON.stringify(searchTerm));
+    localStorage.setItem('searchFormat', JSON.stringify(searchFormat));
+
+    saveHistData();
 
     location.assign(queryString);
 };
