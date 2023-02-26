@@ -13,12 +13,16 @@ const searchFormat = searchFormatQuery[2];
 const searchTerm = searchTermQuery[0];
 const apiRequestUrl = `${apiBase}${searchFormat}/?${jsonParameter}&q=${searchTerm}`;
 
-let termArray = [];
-let formatArray = [];
+let termArray = JSON.parse(localStorage.getItem('termArray') || []);
+let formatArray = JSON.parse(localStorage.getItem('formatArray') || []);
 //functions
 // console.log(searchFormat);
 // console.log(searchTerm);
 // console.log(apiRequestUrl);
+
+function init() {
+    populateSearchHistory(termArray, formatArray);
+};
 
 function populateResults(resultData) {
 
@@ -73,23 +77,45 @@ function populateResults(resultData) {
     resultsContainer.append(resultCard)
 };
 
-function populateSearchHistory() {
-    let prevSearchTerm = localStorage.getItem('searchTerm', searchTerm);
-    let prevSearchFormat = localStorage.getItem('searchFormat', searchFormat);
+function populateSearchHistory(termAry, formatAry) {
 
-    let prevSearchBtn = document.createElement('button');
-    prevSearchBtn.classList.add('btn', 'btn-secondary');
 
-    prevSearchBtn.textContent = `${prevSearchTerm}, ${prevSearchFormat}`;
 
-    searchContainer.append(prevSearchBtn);
+    // let prevSearchTerms = localStorage.getItem('termArray', JSON.parse(termAry));
+    // let prevSearchFormats = localStorage.getItem('formatArray', JSON.parse(formatAry));
+
+    console.log(termAry);
+    console.log(formatAry);
+
+    let searchHistTerm;
+    let searchHistFormat;
+
+    for (let i = 0; i < termAry.length; i++) {
+        searchHistTerm = termAry[i]; 
+    };
+    for (let i = 0; i < formatAry.length; i++) {
+        searchHistFormat = formatAry[i];
+        console.log(`${searchHistTerm}, ${searchHistFormat}`);
+
+        let btnContainer = document.createElement('div');
+        btnContainer.classList.add('d-grid', 'gap-2');
+        searchContainer.appendChild(btnContainer)
+
+        let prevSearchBtn = document.createElement('a');
+        let histQueryString = `${apiBase}${searchHistFormat}/?${jsonParameter}&q=${searchHistTerm}`
+
+        prevSearchBtn.classList.add('btn', 'btn-secondary', 'mb-1');
+        prevSearchBtn.textContent = `${searchHistTerm}, ${searchHistFormat}`;
+        prevSearchBtn.type = 'button';
+        prevSearchBtn.onclick = `${apiPromise(histQueryString)}`;
+        btnContainer.appendChild(prevSearchBtn);
+
+        // prevSearchBtn.addEventListener('click', apiPromise(histQueryString));
+    };
+
+    
+
 };
-
-// function loadHistData () {
-//     localStorageArrayTerm = localStorage.getItem('localStorageArrayTerm') || `[]`;
-//     localStorageArrayFormat = localStorage.getItem('localStorageArrayFormat') || '[]';
-
-// };
 
 function saveHistData() {
 
@@ -111,6 +137,7 @@ function saveHistData() {
 
     localStorage.setItem('termArray', JSON.stringify(termArray));
     localStorage.setItem('formatArray', JSON.stringify(formatArray));
+
 };
 
 function apiPromise(url) {
@@ -134,7 +161,6 @@ function apiPromise(url) {
                 for (let i = 0; i < data.results.length; i++) {
                     populateResults(data.results[i])
                 };
-                populateSearch()
             }
         })
         .catch((error) => window.alert(error))
@@ -169,3 +195,4 @@ searchForm.addEventListener("submit", searchFormSubmitHandler);
 
 //logic if needed
 apiPromise(apiRequestUrl);
+init();
